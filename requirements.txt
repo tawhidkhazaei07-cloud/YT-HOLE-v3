@@ -1,0 +1,4 @@
+# YT Hole backend. Everything else is the Python standard library (3.9+).
+yt-dlp>=2024.12.13      # downloader; update often: pip install -U yt-dlp
+waitress>=3.0           # production WSGI server (Windows, macOS, Linux)
+# System dependency (not pip): FFmpeg, needed for MP3 and merged HD video.

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: ythole
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: YTHOLE_ENV
+        value: production
+      - key: YTHOLE_HOST
+        value: 0.0.0.0
+      - key: YTHOLE_TRUST_PROXY
+        value: "true"
+      - key: YTHOLE_SERVE_FRONTEND
+        value: "true"
+      - key: YTHOLE_DAILY_DOWNLOAD_LIMIT
+        value: "10"
+      - key: YTHOLE_SECRET_KEY
+        generateValue: true
+      - key: YTHOLE_PUBLIC_URL
+        sync: false

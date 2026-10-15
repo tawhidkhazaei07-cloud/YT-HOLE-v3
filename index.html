@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="YT Hole: analyze a permitted video link, pick quality and format, and download in seconds.">
+  <meta name="theme-color" content="#f6f8f8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111817" media="(prefers-color-scheme: dark)">
+  <title>YT Hole · Video Downloader</title>
+  <link rel="icon" type="image/png" sizes="256x256" href="assets/logo/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Hind:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="site.webmanifest">
+  <script src="js/boot.js"></script>
+</head>
+<body>
+  <noscript><p class="noscript">YT Hole needs JavaScript to run. Please enable it and reload.</p></noscript>
+  <!-- ============ ICON SPRITE ============ -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16" /></symbol>
+      <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z" /></symbol>
+      <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8m-4-4v4" /></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z" /></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" /></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" /></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 2.5 20h19L12 4Z" /><path d="M12 10v4m0 3v.01" /></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 11v5m0-8v.01" /></symbol>
+      <symbol id="i-error" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6m0-6-6 6" /></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13" /></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M12 2v3m0 14v3M4.2 4.2l2.1 2.1m11.4 11.4 2.1 2.1M2 12h3m14 0h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" /></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17v.01" /></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l-4-4 4-4M6 12h10" /></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5" /><rect x="13" y="4" width="7" height="7" rx="1.5" /><rect x="4" y="13" width="7" height="7" rx="1.5" /><rect x="13" y="13" width="7" height="7" rx="1.5" /></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" /></symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" /></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a2 2 0 0 1 2-2h8" /></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5-10-6.5Z" /></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></symbol>
+      <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M7 5v14M17 5v14M3 9h4m10 0h4M3 15h4m10 0h4" /></symbol>
+      <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V6l11-2v12" /><circle cx="6.5" cy="18" r="2.5" /><circle cx="17.5" cy="16" r="2.5" /></symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3 5 14h6l-1 7 8-11h-6l1-7Z" /></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z" /><path d="m3 13 9 5 9-5" /></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10m4 0h2M4 17h4m4 0h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5" /><path d="M11 18.5h2" /></symbol>
+      <symbol id="i-laptop" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="10" rx="1.5" /><path d="M2.5 19h19" /></symbol>
+      <symbol id="i-history" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3.5 8.5M3.5 4v4.5H8M12 8v4l3 2" /></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4.5 6v6c0 4.5 3.2 7.8 7.5 9 4.3-1.2 7.5-4.5 7.5-9V6L12 3Z" /></symbol>
+      <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+      <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6" /></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7Z" /><circle cx="12" cy="12" r="3" /></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4Z" /><path d="m13.5 6.5 4 4" /></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.3-4.3L4 8.5M4 4v4.5h4.5M4 13a8 8 0 0 0 14.3 4.3l1.7-1.8M20 20v-4.5h-4.5" /></symbol>
+      <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.5-.8 1.5-1.5 0-1.3-1-1.6-1-2.8 0-.9.7-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-3.9-4-7-9-7Z" /><circle cx="7.5" cy="11" r="1" /><circle cx="10" cy="7" r="1" /><circle cx="15" cy="7.5" r="1" /></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15L6 16ZM10 20a2 2 0 0 0 4 0" /></symbol>
+      <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3" /><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3" /></symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></symbol>
+    </defs>
+  </svg>
+
+  <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
+  <!-- ============ LOADING SCREEN ============ -->
+  <div class="loader" id="appLoader" role="status" aria-live="polite">
+    <div class="loader__inner">
+      <span class="logo logo--lg"><img src="assets/logo/yt-hole-logo.png" alt="YT Hole" width="1600" height="800"></span>
+      <span class="loader__bar" aria-hidden="true"><span></span></span>
+      <span class="visually-hidden" data-i18n="common.loading">Loading…</span>
+    </div>
+  </div>
+
+  <!-- ============ HEADER / NAVBAR ============ -->
+  <header class="navbar" id="navbar">
+    <div class="container navbar__inner">
+      <a href="#/" class="navbar__brand" aria-label="YT Hole home">
+        <span class="logo"><img src="assets/logo/yt-hole-logo.png" alt="YT Hole" width="1600" height="800"></span>
+      </a>
+      <nav class="navbar__nav" aria-label="Primary" data-i18n-aria="a11y.primaryNav">
+        <ul class="navbar__links">
+          <li><a href="#/" data-nav="home" data-i18n="nav.home">Home</a></li>
+          <li><a href="#/#downloader" data-nav="downloader" data-i18n="nav.downloader">Downloader</a></li>
+          <li><a href="#/#features" data-nav="features" data-i18n="nav.features">Features</a></li>
+          <li><a href="#/#how" data-nav="how" data-i18n="nav.how">How it works</a></li>
+          <li><a href="#/#faq" data-nav="faq" data-i18n="nav.faq">FAQ</a></li>
+        </ul>
+      </nav>
+      <div class="navbar__actions">
+        <div class="lang-select" data-lang-select>
+          <button type="button" class="btn btn--ghost btn--sm lang-select__trigger" aria-haspopup="listbox" aria-expanded="false" data-i18n-aria="lang.choose" aria-label="Choose language">
+            <svg class="icon"><use href="#i-globe"/></svg>
+            <span class="lang-select__code" data-lang-current>EN</span>
+            <svg class="icon icon--sm"><use href="#i-chevron-down"/></svg>
+          </button>
+          <ul class="lang-select__menu" role="listbox" tabindex="-1" hidden></ul>
+        </div>
+        <button type="button" class="btn btn--ghost btn--icon" data-action="toggle-theme" aria-label="Toggle dark mode" data-i18n-aria="theme.toggle">
+          <svg class="icon theme-icon-light"><use href="#i-moon"/></svg>
+          <svg class="icon theme-icon-dark"><use href="#i-sun"/></svg>
+        </button>
+        <div class="navbar__auth" data-auth="guest">
+          <a href="#/login" class="btn btn--ghost btn--sm" data-action="open-modal" data-modal="login" data-i18n="nav.login">Login</a>
+          <a href="#/register" class="btn btn--primary btn--sm" data-registration data-action="open-modal" data-modal="register" data-i18n="nav.register">Register</a>
+        </div>
+        <div class="navbar__auth" data-auth="user" hidden>
+          <a href="#/dashboard/overview" class="btn btn--primary btn--sm">
+            <span class="avatar avatar--xs" data-user-initials>YT</span>
+            <span data-i18n="nav.dashboard">Dashboard</span>
+          </a>
+        </div>
+        <button type="button" class="btn btn--ghost btn--icon navbar__burger" data-action="open-menu" aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu" data-i18n-aria="nav.openMenu">
+          <svg class="icon"><use href="#i-menu"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mode-banner" data-mode-banner role="status" hidden>
+    <div class="container mode-banner__inner"><svg class="icon"><use href="#i-info"/></svg><span data-mode-banner-text></span>
+      <button type="button" class="btn btn--ghost btn--icon btn--sm" data-action="dismiss-banner" aria-label="Dismiss notification" data-i18n-aria="common.dismiss"><svg class="icon"><use href="#i-close"/></svg></button></div>
+  </div>
+
+  <!-- ============ MOBILE MENU ============ -->
+  <div class="drawer" id="mobileMenu" aria-hidden="true">
+    <div class="drawer__backdrop" data-action="close-menu"></div>
+    <aside class="drawer__panel" role="dialog" aria-modal="true" aria-label="Menu" data-i18n-aria="nav.menu">
+      <div class="drawer__head">
+        <span class="logo"><img src="assets/logo/yt-hole-logo.png" alt="YT Hole" width="1600" height="800" loading="lazy"></span>
+        <button type="button" class="btn btn--ghost btn--icon" data-action="close-menu" aria-label="Close menu" data-i18n-aria="nav.closeMenu">
+          <svg class="icon"><use href="#i-close"/></svg>
+        </button>
+      </div>
+      <nav class="drawer__nav" aria-label="Mobile" data-i18n-aria="a11y.mobileNav">
+        <a href="#/" data-i18n="nav.home">Home</a>
+        <a href="#/#downloader" data-i18n="nav.downloader">Downloader</a>
+        <a href="#/#features" data-i18n="nav.features">Features</a>
+        <a href="#/#how" data-i18n="nav.how">How it works</a>
+        <a href="#/#faq" data-i18n="nav.faq">FAQ</a>
+        <a href="#/dashboard/overview" data-auth="user" hidden data-i18n="nav.dashboard">Dashboard</a>
+      </nav>
+      <div class="drawer__foot">
+        <button type="button" class="btn btn--outline btn--block" data-action="open-modal" data-modal="language">
+          <svg class="icon"><use href="#i-globe"/></svg>
+          <span data-i18n="lang.label">Language</span>
+          <span class="drawer__lang" data-lang-name>English</span>
+        </button>
+        <button type="button" class="btn btn--outline btn--block" data-action="toggle-theme">
+          <svg class="icon theme-icon-light"><use href="#i-moon"/></svg>
+          <svg class="icon theme-icon-dark"><use href="#i-sun"/></svg>
+          <span data-i18n="theme.toggleShort">Switch theme</span>
+        </button>
+        <div class="drawer__auth" data-auth="guest">
+          <a href="#/login" class="btn btn--outline btn--block" data-i18n="nav.login">Login</a>
+          <a href="#/register" class="btn btn--primary btn--block" data-i18n="nav.register">Register</a>
+        </div>
+        <button type="button" class="btn btn--outline btn--block" data-auth="user" hidden data-action="logout">
+          <svg class="icon flip-rtl"><use href="#i-logout"/></svg>
+          <span data-i18n="dash.nav.logout">Logout</span>
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <main id="main" tabindex="-1">
+    <!-- ============ HOME VIEW ============ -->
+    <div class="view" data-view="home">
+      <section class="hero" id="downloader" aria-labelledby="heroTitle">
+        <div class="hero__rings" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="container hero__inner">
+          <div class="hero__copy reveal">
+            <p class="eyebrow" data-i18n="hero.eyebrow">Paste. Pick. Download.</p>
+            <h1 id="heroTitle" class="hero__title" data-i18n="hero.title">Download your videos with YT Hole</h1>
+            <p class="hero__subtitle" data-i18n="hero.subtitle">Paste a link you have permission to save. YT Hole reads the video, shows every available quality and format, and hands you a clean file in seconds.</p>
+            <ul class="platforms" aria-label="Supported platforms" data-i18n-aria="hero.platforms">
+              <li class="platform"><span class="platform__dot platform__dot--yt" aria-hidden="true"></span>YouTube</li>
+              <li class="platform"><span class="platform__dot platform__dot--ig" aria-hidden="true"></span>Instagram</li>
+              <li class="platform"><span class="platform__dot platform__dot--tt" aria-hidden="true"></span>TikTok</li>
+            </ul>
+          </div>
+          <div class="hero__tool reveal" data-downloader-mount="home"></div>
+        </div>
+      </section>
+
+      <section class="section" id="features" aria-labelledby="featuresTitle">
+        <div class="container">
+          <header class="section__head reveal">
+            <p class="eyebrow" data-i18n="features.eyebrow">Features</p>
+            <h2 id="featuresTitle" class="section__title" data-i18n="features.title">Everything you need, nothing you don't</h2>
+          </header>
+          <div class="features">
+            <article class="feature feature--wide reveal">
+              <span class="feature__icon"><svg class="icon"><use href="#i-bolt"/></svg></span>
+              <h3 data-i18n="features.fast.title">Fast processing</h3>
+              <p data-i18n="features.fast.text">Links are analyzed in seconds, so you spend time watching, not waiting.</p>
+            </article>
+            <article class="feature reveal">
+              <span class="feature__icon"><svg class="icon"><use href="#i-film"/></svg></span>
+              <h3 data-i18n="features.formats.title">Multiple formats</h3>
+              <p data-i18n="features.formats.text">MP4, WEBM, or audio-only MP3.</p>
+            </article>
+            <article class="feature reveal">
+              <span class="feature__icon"><svg class="icon"><use href="#i-layers"/></svg></span>
+              <h3 data-i18n="features.quality.title">Quality options</h3>
+              <p data-i18n="features.quality.text">From 144p up to the best available.</p>
+            </article>
+            <article class="feature reveal">
+              <span class="feature__icon"><svg class="icon"><use href="#i-phone"/></svg></span>
+              <h3 data-i18n="features.mobile.title">Mobile friendly</h3>
+              <p data-i18n="features.mobile.text">Built for thumbs, not just mice.</p>
+            </article>
+            <article class="feature reveal">
+              <span class="feature__icon"><svg class="icon"><use href="#i-laptop"/></svg></span>
+              <h3 data-i18n="features.desktop.title">Desktop friendly</h3>
+              <p data-i18n="features.desktop.text">Keyboard shortcuts and wide layouts.</p>
+            </article>
+            <article class="feature reveal">
+              <span class="feature__icon"><svg class="icon"><use href="#i-history"/></svg></span>
+              <h3 data-i18n="features.history.title">Download history</h3>
+              <p data-i18n="features.history.text">Search, filter, and repeat past downloads.</p>
+            </article>
+            <article class="feature reveal">
+              <span class="feature__icon"><svg class="icon"><use href="#i-user"/></svg></span>
+              <h3 data-i18n="features.accounts.title">User accounts</h3>
+              <p data-i18n="features.accounts.text">Favorites and settings that follow you.</p>
+            </article>
+            <article class="feature reveal">
+              <span class="feature__icon"><svg class="icon"><use href="#i-moon"/></svg></span>
+              <h3 data-i18n="features.dark.title">Dark mode</h3>
+              <p data-i18n="features.dark.text">A real dark theme, easy on the eyes.</p>
+            </article>
+            <article class="feature reveal">
+              <span class="feature__icon"><svg class="icon"><use href="#i-globe"/></svg></span>
+              <h3 data-i18n="features.lang.title">Multilingual</h3>
+              <p data-i18n="features.lang.text">Six languages, including right-to-left Persian.</p>
+            </article>
+            <article class="feature feature--wide reveal">
+              <span class="feature__icon"><svg class="icon"><use href="#i-sliders"/></svg></span>
+              <h3 data-i18n="features.simple.title">Simple interface</h3>
+              <p data-i18n="features.simple.text">One field, one button. Every option is there when you need it and out of the way when you don't.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--tinted" id="how" aria-labelledby="howTitle">
+        <div class="container">
+          <header class="section__head reveal">
+            <p class="eyebrow" data-i18n="how.eyebrow">How it works</p>
+            <h2 id="howTitle" class="section__title" data-i18n="how.title">Four steps, about ten seconds</h2>
+          </header>
+          <ol class="steps">
+            <li class="step reveal">
+              <span class="step__icon"><svg class="icon"><use href="#i-copy"/></svg></span>
+              <span class="step__num">1</span>
+              <h3 data-i18n="how.s1.title">Copy a permitted URL</h3>
+              <p data-i18n="how.s1.text">Grab the link to a video you own or are allowed to save.</p>
+            </li>
+            <li class="step reveal">
+              <span class="step__icon"><svg class="icon"><use href="#i-link"/></svg></span>
+              <span class="step__num">2</span>
+              <h3 data-i18n="how.s2.title">Paste it into YT Hole</h3>
+              <p data-i18n="how.s2.text">Drop it in the field and press Analyze.</p>
+            </li>
+            <li class="step reveal">
+              <span class="step__icon"><svg class="icon"><use href="#i-sliders"/></svg></span>
+              <span class="step__num">3</span>
+              <h3 data-i18n="how.s3.title">Choose quality and format</h3>
+              <p data-i18n="how.s3.text">Pick resolution and file type. The size updates live.</p>
+            </li>
+            <li class="step reveal">
+              <span class="step__icon"><svg class="icon"><use href="#i-download"/></svg></span>
+              <span class="step__num">4</span>
+              <h3 data-i18n="how.s4.title">Download the file</h3>
+              <p data-i18n="how.s4.text">Watch the progress ring fill and save your file.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" id="faq" aria-labelledby="faqTitle">
+        <div class="container container--narrow">
+          <header class="section__head reveal">
+            <p class="eyebrow" data-i18n="faq.eyebrow">FAQ</p>
+            <h2 id="faqTitle" class="section__title" data-i18n="faq.title">Questions, answered</h2>
+          </header>
+          <div class="accordion" data-accordion>
+            <div class="accordion__item">
+              <h3><button type="button" class="accordion__trigger" aria-expanded="false" id="faq-q1" aria-controls="faq-a1"><span data-i18n="faq.q1">What is YT Hole?</span><svg class="icon"><use href="#i-chevron-down"/></svg></button></h3>
+              <div class="accordion__panel" id="faq-a1" role="region" aria-labelledby="faq-q1"><div><p data-i18n="faq.a1">YT Hole is a simple web tool that turns a video link into a downloadable file in the quality and format you choose.</p></div></div>
+            </div>
+            <div class="accordion__item">
+              <h3><button type="button" class="accordion__trigger" aria-expanded="false" id="faq-q2" aria-controls="faq-a2"><span data-i18n="faq.q2">How does downloading work?</span><svg class="icon"><use href="#i-chevron-down"/></svg></button></h3>
+              <div class="accordion__panel" id="faq-a2" role="region" aria-labelledby="faq-q2"><div><p data-i18n="faq.a2">You paste a link, YT Hole reads the available streams, you choose a quality and format, and the file is prepared for you to save.</p></div></div>
+            </div>
+            <div class="accordion__item">
+              <h3><button type="button" class="accordion__trigger" aria-expanded="false" id="faq-q3" aria-controls="faq-a3"><span data-i18n="faq.q3">Which platforms are supported?</span><svg class="icon"><use href="#i-chevron-down"/></svg></button></h3>
+              <div class="accordion__panel" id="faq-a3" role="region" aria-labelledby="faq-q3"><div><p data-i18n="faq.a3">YouTube, Instagram, and TikTok links are supported. Private, age-restricted, or protected content is not.</p></div></div>
+            </div>
+            <div class="accordion__item">
+              <h3><button type="button" class="accordion__trigger" aria-expanded="false" id="faq-q4" aria-controls="faq-a4"><span data-i18n="faq.q4">Which formats are available?</span><svg class="icon"><use href="#i-chevron-down"/></svg></button></h3>
+              <div class="accordion__panel" id="faq-a4" role="region" aria-labelledby="faq-q4"><div><p data-i18n="faq.a4">Video as MP4 or WEBM from 144p up to the best available quality, and audio-only as MP3.</p></div></div>
+            </div>
+            <div class="accordion__item">
+              <h3><button type="button" class="accordion__trigger" aria-expanded="false" id="faq-q5" aria-controls="faq-a5"><span data-i18n="faq.q5">Why is a download taking time?</span><svg class="icon"><use href="#i-chevron-down"/></svg></button></h3>
+              <div class="accordion__panel" id="faq-a5" role="region" aria-labelledby="faq-q5"><div><p data-i18n="faq.a5">Speed depends on the file size, the quality you chose, your connection, and how quickly the source platform responds. Higher resolutions take longer.</p></div></div>
+            </div>
+            <div class="accordion__item">
+              <h3><button type="button" class="accordion__trigger" aria-expanded="false" id="faq-q6" aria-controls="faq-a6"><span data-i18n="faq.q6">Where are downloaded files stored?</span><svg class="icon"><use href="#i-chevron-down"/></svg></button></h3>
+              <div class="accordion__panel" id="faq-a6" role="region" aria-labelledby="faq-q6"><div><p data-i18n="faq.a6">Files are saved by your browser, usually in your Downloads folder. YT Hole keeps only a history entry, not the file itself.</p></div></div>
+            </div>
+            <div class="accordion__item">
+              <h3><button type="button" class="accordion__trigger" aria-expanded="false" id="faq-q7" aria-controls="faq-a7"><span data-i18n="faq.q7">Is an account required?</span><svg class="icon"><use href="#i-chevron-down"/></svg></button></h3>
+              <div class="accordion__panel" id="faq-a7" role="region" aria-labelledby="faq-q7"><div><p data-i18n="faq.a7">No. An account is optional and adds download history, favorites, and saved settings.</p></div></div>
+            </div>
+            <div class="accordion__item">
+              <h3><button type="button" class="accordion__trigger" aria-expanded="false" id="faq-q8" aria-controls="faq-a8"><span data-i18n="faq.q8">Can I use YT Hole on mobile?</span><svg class="icon"><use href="#i-chevron-down"/></svg></button></h3>
+              <div class="accordion__panel" id="faq-a8" role="region" aria-labelledby="faq-q8"><div><p data-i18n="faq.a8">Yes. YT Hole works in any modern mobile browser on iPhone and Android.</p></div></div>
+            </div>
+          </div>
+          <p class="legal-note"><svg class="icon"><use href="#i-shield"/></svg><span data-i18n="legal.notice">Only download content you own or are authorized to download. Platform terms of service and copyright laws apply.</span></p>
+        </div>
+      </section>
+
+      <section class="section cta" aria-labelledby="ctaTitle">
+        <div class="container cta__inner reveal">
+          <div>
+            <h2 id="ctaTitle" class="cta__title" data-i18n="cta.title">Keep every download in one place</h2>
+            <p data-i18n="cta.text">A free account adds history, favorites, and settings that stay put.</p>
+          </div>
+          <div class="cta__actions">
+            <a href="#/register" class="btn btn--primary btn--lg" data-i18n="cta.button">Create free account</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ AUTH VIEWS ============ -->
+    <div class="view view--auth" data-view="login" hidden>
+      <div class="auth">
+        <div class="auth__card">
+          <a href="#/" class="auth__logo logo logo--md" aria-label="YT Hole home"><img src="assets/logo/yt-hole-logo.png" alt="YT Hole" width="1600" height="800" loading="lazy"></a>
+          <h1 class="auth__title" data-i18n="auth.login.title">Welcome back</h1>
+          <p class="auth__subtitle" data-i18n="auth.login.subtitle">Log in to see your downloads and settings.</p>
+          <div data-auth-mount="login"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view view--auth" data-view="register" hidden>
+      <div class="auth">
+        <div class="auth__card">
+          <a href="#/" class="auth__logo logo logo--md" aria-label="YT Hole home"><img src="assets/logo/yt-hole-logo.png" alt="YT Hole" width="1600" height="800" loading="lazy"></a>
+          <h1 class="auth__title" data-i18n="auth.register.title">Create your account</h1>
+          <p class="auth__subtitle" data-i18n="auth.register.subtitle">Free forever. Keeps your history and preferences.</p>
+          <div data-auth-mount="register"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view view--auth" data-view="reset" hidden>
+      <div class="auth">
+        <div class="auth__card">
+          <a href="#/" class="auth__logo logo logo--md" aria-label="YT Hole home"><img src="assets/logo/yt-hole-logo.png" alt="YT Hole" width="1600" height="800" loading="lazy"></a>
+          <h1 class="auth__title" data-i18n="auth.reset.title">Choose a new password</h1>
+          <p class="auth__subtitle" data-i18n="auth.reset.subtitle">Enter a new password for your account.</p>
+          <div data-auth-mount="reset"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ DASHBOARD VIEW ============ -->
+    <div class="view" data-view="dashboard" hidden>
+      <div class="dash">
+        <aside class="dash__side" aria-label="Dashboard" data-i18n-aria="dash.label">
+          <div class="dash__brand">
+            <span class="logo logo--md"><img src="assets/logo/yt-hole-logo.png" alt="YT Hole" width="1600" height="800" loading="lazy"></span>
+          </div>
+          <div class="dash__user">
+            <span class="avatar" data-user-initials>YT</span>
+            <div class="dash__user-meta">
+              <strong data-user-name>demo</strong>
+              <span data-user-email>demo@ythole.app</span>
+            </div>
+          </div>
+          <nav class="dash__nav">
+            <a href="#/dashboard/overview" data-dash-link="overview"><svg class="icon"><use href="#i-grid"/></svg><span data-i18n="dash.nav.overview">Overview</span></a>
+            <a href="#/dashboard/downloader" data-dash-link="downloader"><svg class="icon"><use href="#i-download"/></svg><span data-i18n="dash.nav.downloader">Downloader</span></a>
+            <a href="#/dashboard/downloads" data-dash-link="downloads"><svg class="icon"><use href="#i-list"/></svg><span data-i18n="dash.nav.downloads">Downloads</span></a>
+            <a href="#/dashboard/favorites" data-dash-link="favorites"><svg class="icon"><use href="#i-heart"/></svg><span data-i18n="dash.nav.favorites">Favorites</span></a>
+            <a href="#/dashboard/profile" data-dash-link="profile"><svg class="icon"><use href="#i-user"/></svg><span data-i18n="dash.nav.profile">Profile</span></a>
+            <a href="#/dashboard/settings" data-dash-link="settings"><svg class="icon"><use href="#i-settings"/></svg><span data-i18n="dash.nav.settings">Settings</span></a>
+            <a href="#/dashboard/help" data-dash-link="help"><svg class="icon"><use href="#i-help"/></svg><span data-i18n="dash.nav.help">Help</span></a>
+            <button type="button" data-action="logout"><svg class="icon flip-rtl"><use href="#i-logout"/></svg><span data-i18n="dash.nav.logout">Logout</span></button>
+          </nav>
+        </aside>
+
+        <div class="dash__main">
+          <!-- Overview -->
+          <section class="panel" data-panel="overview" aria-labelledby="ovTitle">
+            <header class="panel__head">
+              <div>
+                <h1 id="ovTitle" class="panel__title"><span data-i18n="dash.overview.greeting">Hello</span>, <span data-user-name>demo</span></h1>
+                <p class="panel__sub" data-i18n="dash.overview.sub">Here is what has happened with your downloads.</p>
+              </div>
+              <a href="#/dashboard/downloader" class="btn btn--primary"><svg class="icon"><use href="#i-download"/></svg><span data-i18n="dash.overview.newDownload">New download</span></a>
+            </header>
+            <div class="stats" data-stats></div>
+            <div class="grid-2">
+              <section class="card">
+                <header class="card__head">
+                  <h2 class="card__title" data-i18n="dash.overview.recent">Recent downloads</h2>
+                  <a href="#/dashboard/downloads" class="link" data-i18n="dash.overview.viewAll">View all</a>
+                </header>
+                <ul class="mini-list" data-recent-list></ul>
+              </section>
+              <section class="card">
+                <header class="card__head">
+                  <h2 class="card__title" data-i18n="dash.overview.formats">Formats used</h2>
+                </header>
+                <div class="format-bars" data-format-bars></div>
+              </section>
+            </div>
+          </section>
+
+          <!-- Downloader -->
+          <section class="panel" data-panel="downloader" hidden aria-labelledby="dlTitle">
+            <header class="panel__head">
+              <div>
+                <h1 id="dlTitle" class="panel__title" data-i18n="dash.nav.downloader">Downloader</h1>
+                <p class="panel__sub" data-i18n="dash.downloader.sub">Paste a link to analyze it. Defaults come from your settings.</p>
+              </div>
+              <button type="button" class="btn btn--outline" data-action="open-modal" data-modal="downloadSettings"><svg class="icon"><use href="#i-sliders"/></svg><span data-i18n="dash.downloader.defaults">Download defaults</span></button>
+            </header>
+            <div class="panel__narrow" data-downloader-mount="dashboard"></div>
+          </section>
+
+          <!-- Downloads -->
+          <section class="panel" data-panel="downloads" hidden aria-labelledby="histTitle">
+            <header class="panel__head">
+              <div>
+                <h1 id="histTitle" class="panel__title" data-i18n="dash.nav.downloads">Downloads</h1>
+                <p class="panel__sub" data-i18n="history.sub">Every file you have downloaded with YT Hole.</p>
+              </div>
+            </header>
+            <div class="toolbar" role="search">
+              <label class="input-icon toolbar__search">
+                <span class="visually-hidden" data-i18n="history.search">Search downloads</span>
+                <svg class="icon"><use href="#i-search"/></svg>
+                <input type="search" class="input" data-history-search placeholder="Search downloads" data-i18n-placeholder="history.search" autocomplete="off">
+              </label>
+              <label class="toolbar__field">
+                <span class="visually-hidden" data-i18n="history.filterStatus">Filter by status</span>
+                <select class="input select" data-history-filter="status">
+                  <option value="all" data-i18n="history.allStatuses">All statuses</option>
+                  <option value="completed" data-i18n="status.completed">Completed</option>
+                  <option value="failed" data-i18n="status.failed">Failed</option>
+                  <option value="cancelled" data-i18n="status.cancelled">Cancelled</option>
+                </select>
+              </label>
+              <label class="toolbar__field">
+                <span class="visually-hidden" data-i18n="history.filterFormat">Filter by format</span>
+                <select class="input select" data-history-filter="format">
+                  <option value="all" data-i18n="history.allFormats">All formats</option>
+                  <option value="mp4">MP4</option>
+                  <option value="webm">WEBM</option>
+                  <option value="mp3">MP3</option>
+                </select>
+              </label>
+              <label class="toolbar__field">
+                <span class="visually-hidden" data-i18n="history.sort">Sort</span>
+                <select class="input select" data-history-sort>
+                  <option value="newest" data-i18n="history.sortNewest">Newest first</option>
+                  <option value="oldest" data-i18n="history.sortOldest">Oldest first</option>
+                  <option value="largest" data-i18n="history.sortLargest">Largest first</option>
+                  <option value="title" data-i18n="history.sortTitle">Title A–Z</option>
+                </select>
+              </label>
+            </div>
+            <div data-history-mount="downloads"></div>
+          </section>
+
+          <!-- Favorites -->
+          <section class="panel" data-panel="favorites" hidden aria-labelledby="favTitle">
+            <header class="panel__head">
+              <div>
+                <h1 id="favTitle" class="panel__title" data-i18n="dash.nav.favorites">Favorites</h1>
+                <p class="panel__sub" data-i18n="favorites.sub">Downloads you marked with a heart.</p>
+              </div>
+            </header>
+            <div data-history-mount="favorites"></div>
+          </section>
+
+          <!-- Profile -->
+          <section class="panel" data-panel="profile" hidden aria-labelledby="profTitle">
+            <header class="panel__head">
+              <div>
+                <h1 id="profTitle" class="panel__title" data-i18n="dash.nav.profile">Profile</h1>
+                <p class="panel__sub" data-i18n="profile.sub">Your account details.</p>
+              </div>
+            </header>
+            <div class="profile card">
+              <div class="profile__top">
+                <span class="avatar avatar--xl" data-user-initials>YT</span>
+                <div class="profile__id">
+                  <h2 data-user-name>demo</h2>
+                  <p data-user-email>demo@ythole.app</p>
+                </div>
+                <button type="button" class="btn btn--outline" data-action="open-modal" data-modal="editProfile"><svg class="icon"><use href="#i-edit"/></svg><span data-i18n="profile.edit">Edit profile</span></button>
+              </div>
+              <dl class="profile__facts">
+                <div><dt data-i18n="profile.username">Username</dt><dd data-user-name>demo</dd></div>
+                <div><dt data-i18n="profile.email">Email</dt><dd data-user-email>demo@ythole.app</dd></div>
+                <div><dt data-i18n="profile.created">Member since</dt><dd data-user-created>—</dd></div>
+                <div><dt data-i18n="profile.total">Total downloads</dt><dd data-user-total>0</dd></div>
+                <div><dt data-i18n="profile.lastLogin">Last login</dt><dd data-user-last-login>—</dd></div>
+                <div><dt data-i18n="profile.passwordChanged">Password changed</dt><dd data-user-password-changed>—</dd></div>
+              </dl>
+            </div>
+            <div class="card security">
+              <h2 class="card__title"><svg class="icon"><use href="#i-shield"/></svg><span data-i18n="security.title">Security</span></h2>
+              <p class="panel__sub" data-i18n="security.sub">Password, devices and sign-in.</p>
+              <div class="security__actions">
+                <button type="button" class="btn btn--outline" data-action="open-modal" data-modal="changePassword"><svg class="icon"><use href="#i-lock"/></svg><span data-i18n="security.changePassword">Change password</span></button>
+                <button type="button" class="btn btn--outline" data-action="open-modal" data-modal="sessions"><svg class="icon"><use href="#i-laptop"/></svg><span data-i18n="security.sessions">Active devices</span></button>
+                <button type="button" class="btn btn--outline" data-action="open-modal" data-modal="logoutAll"><svg class="icon flip-rtl"><use href="#i-logout"/></svg><span data-i18n="security.logoutAll">Sign out everywhere</span></button>
+              </div>
+            </div>
+            <div class="card security">
+              <h2 class="card__title"><svg class="icon"><use href="#i-database"/></svg><span data-i18n="security.data">Your data</span></h2>
+              <p class="panel__sub" data-i18n="security.dataSub">Export or remove what YT Hole stores about you.</p>
+              <div class="security__actions">
+                <button type="button" class="btn btn--outline" data-action="open-modal" data-modal="exportData"><svg class="icon"><use href="#i-download"/></svg><span data-i18n="security.export">Export my data</span></button>
+                <button type="button" class="btn btn--outline" data-action="open-modal" data-modal="clearHistory"><svg class="icon"><use href="#i-trash"/></svg><span data-i18n="security.clearHistory">Clear history</span></button>
+              </div>
+            </div>
+            <div class="card security security--danger">
+              <h2 class="card__title"><svg class="icon"><use href="#i-alert"/></svg><span data-i18n="security.danger">Danger zone</span></h2>
+              <div class="security__actions">
+                <button type="button" class="btn btn--danger" data-action="open-modal" data-modal="deleteAccount"><svg class="icon"><use href="#i-trash"/></svg><span data-i18n="security.deleteTitle">Delete account</span></button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Settings -->
+          <section class="panel" data-panel="settings" hidden aria-labelledby="setTitle">
+            <header class="panel__head">
+              <div>
+                <h1 id="setTitle" class="panel__title" data-i18n="dash.nav.settings">Settings</h1>
+                <p class="panel__sub" data-settings-scope data-i18n="settings.sub">Saved on this device.</p>
+              </div>
+            </header>
+            <form class="settings" data-settings-form novalidate>
+              <fieldset class="card settings__group">
+                <legend class="settings__legend"><svg class="icon"><use href="#i-palette"/></svg><span data-i18n="settings.appearance">Appearance</span></legend>
+                <div class="segmented" role="radiogroup" aria-label="Theme" data-i18n-aria="settings.theme">
+                  <label class="segmented__opt"><input type="radio" name="theme" value="light"><span><svg class="icon"><use href="#i-sun"/></svg><span data-i18n="theme.light">Light</span></span></label>
+                  <label class="segmented__opt"><input type="radio" name="theme" value="dark"><span><svg class="icon"><use href="#i-moon"/></svg><span data-i18n="theme.dark">Dark</span></span></label>
+                  <label class="segmented__opt"><input type="radio" name="theme" value="system"><span><svg class="icon"><use href="#i-monitor"/></svg><span data-i18n="theme.system">System</span></span></label>
+                </div>
+              </fieldset>
+              <fieldset class="card settings__group">
+                <legend class="settings__legend"><svg class="icon"><use href="#i-globe"/></svg><span data-i18n="lang.label">Language</span></legend>
+                <label class="field">
+                  <span class="field__label" data-i18n="settings.interfaceLang">Interface language</span>
+                  <select class="input select" name="language" data-lang-native-select></select>
+                </label>
+              </fieldset>
+              <fieldset class="card settings__group">
+                <legend class="settings__legend"><svg class="icon"><use href="#i-download"/></svg><span data-i18n="settings.downloads">Downloads</span></legend>
+                <div class="field-row">
+                  <label class="field">
+                    <span class="field__label" data-i18n="settings.defaultFormat">Default format</span>
+                    <select class="input select" name="defaultFormat">
+                      <option value="mp4">MP4</option>
+                      <option value="webm">WEBM</option>
+                      <option value="mp3">MP3</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span class="field__label" data-i18n="settings.defaultQuality">Default quality</span>
+                    <select class="input select" name="defaultQuality" data-quality-select></select>
+                  </label>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" name="autoDownload" role="switch">
+                  <span class="switch__track" aria-hidden="true"></span>
+                  <span class="switch__text"><strong data-i18n="settings.autoDownload">Auto-download</strong><small data-i18n="settings.autoDownloadHint">Start downloading right after analysis using your defaults.</small></span>
+                </label>
+              </fieldset>
+              <fieldset class="card settings__group">
+                <legend class="settings__legend"><svg class="icon"><use href="#i-bell"/></svg><span data-i18n="settings.notifications">Notifications</span></legend>
+                <label class="switch">
+                  <input type="checkbox" name="notifyComplete" role="switch">
+                  <span class="switch__track" aria-hidden="true"></span>
+                  <span class="switch__text"><strong data-i18n="settings.notifyComplete">Download complete</strong></span>
+                </label>
+                <label class="switch">
+                  <input type="checkbox" name="notifyErrors" role="switch">
+                  <span class="switch__track" aria-hidden="true"></span>
+                  <span class="switch__text"><strong data-i18n="settings.notifyErrors">Errors</strong></span>
+                </label>
+                <label class="switch">
+                  <input type="checkbox" name="notifySystem" role="switch">
+                  <span class="switch__track" aria-hidden="true"></span>
+                  <span class="switch__text"><strong data-i18n="settings.notifySystem">System notifications</strong></span>
+                </label>
+              </fieldset>
+              <div class="settings__actions">
+                <button type="button" class="btn btn--ghost" data-action="reset-settings" data-i18n="settings.reset">Reset to defaults</button>
+                <button type="submit" class="btn btn--primary" data-i18n="settings.save">Save settings</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Help -->
+          <section class="panel" data-panel="help" hidden aria-labelledby="helpTitle">
+            <header class="panel__head">
+              <div>
+                <h1 id="helpTitle" class="panel__title" data-i18n="dash.nav.help">Help</h1>
+                <p class="panel__sub" data-i18n="help.sub">Quick answers and ways to get unstuck.</p>
+              </div>
+            </header>
+            <div class="help-grid">
+              <a class="card help-card" href="#/#faq">
+                <svg class="icon"><use href="#i-help"/></svg>
+                <h2 data-i18n="help.faq.title">Read the FAQ</h2>
+                <p data-i18n="help.faq.text">Common questions about formats, speed, and storage.</p>
+              </a>
+              <button type="button" class="card help-card" data-action="open-modal" data-modal="errorInfo">
+                <svg class="icon"><use href="#i-alert"/></svg>
+                <h2 data-i18n="help.errors.title">Troubleshoot errors</h2>
+                <p data-i18n="help.errors.text">What each error means and how to fix it.</p>
+              </button>
+              <button type="button" class="card help-card" data-action="open-modal" data-modal="terms">
+                <svg class="icon"><use href="#i-shield"/></svg>
+                <h2 data-i18n="help.terms.title">Terms of use</h2>
+                <p data-i18n="help.terms.text">What you can and cannot download.</p>
+              </button>
+              <button type="button" class="card help-card" data-action="open-modal" data-modal="privacy">
+                <svg class="icon"><use href="#i-lock"/></svg>
+                <h2 data-i18n="help.privacy.title">Privacy</h2>
+                <p data-i18n="help.privacy.text">What is stored and where.</p>
+              </button>
+            </div>
+            <div class="card"><h2 class="card__title" data-i18n="help.status.title">Server status</h2><dl class="profile__facts" data-server-info></dl></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <span class="logo logo--md"><img src="assets/logo/yt-hole-logo.png" alt="YT Hole" width="1600" height="800" loading="lazy"></span>
+        <p data-i18n="footer.desc">A clean, fast way to save videos you are allowed to keep.</p>
+      </div>
+      <nav class="footer__col" aria-labelledby="footNav">
+        <h2 id="footNav" data-i18n="footer.navigation">Navigation</h2>
+        <a href="#/" data-i18n="nav.home">Home</a>
+        <a href="#/#downloader" data-i18n="nav.downloader">Downloader</a>
+        <a href="#/#how" data-i18n="nav.how">How it works</a>
+        <a href="#/dashboard/overview" data-i18n="nav.dashboard">Dashboard</a>
+      </nav>
+      <nav class="footer__col" aria-labelledby="footHelp">
+        <h2 id="footHelp" data-i18n="footer.help">Help</h2>
+        <a href="#/#features" data-i18n="nav.features">Features</a>
+        <a href="#/#faq" data-i18n="nav.faq">FAQ</a>
+        <button type="button" data-action="open-modal" data-modal="privacy" data-i18n="footer.privacy">Privacy</button>
+        <button type="button" data-action="open-modal" data-modal="terms" data-i18n="footer.terms">Terms</button>
+      </nav>
+      <div class="footer__col">
+        <h2 data-i18n="lang.label">Language</h2>
+        <label class="visually-hidden" for="footerLang" data-i18n="lang.choose">Choose language</label>
+        <select id="footerLang" class="input select input--sm" data-lang-native-select></select>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <p>© <span data-year>2026</span> YT Hole. <span data-i18n="footer.rights">All rights reserved.</span></p>
+      <p class="footer__credit"><img src="assets/brand/af-mark.png" alt="" width="28" height="28" loading="lazy"><span data-i18n="footer.madeBy">A product of AF Game Studio</span></p>
+      <p class="footer__legal" data-i18n="legal.short">Download only content you are authorized to save.</p>
+    </div>
+  </footer>
+
+  <!-- ============ TOASTS ============ -->
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- ============ MODAL ROOT ============ -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+      <header class="modal__head">
+        <h2 class="modal__title" id="modalTitle"></h2>
+        <button type="button" class="btn btn--ghost btn--icon" data-modal-close aria-label="Close" data-i18n-aria="common.close">
+          <svg class="icon"><use href="#i-close"/></svg>
+        </button>
+      </header>
+      <div class="modal__body" id="modalBody"></div>
+      <footer class="modal__foot" id="modalFoot"></footer>
+    </div>
+  </div>
+
+  <!-- ============ TEMPLATES ============ -->
+  <template id="tpl-downloader">
+    <div class="dl card" data-state="idle">
+      <form class="dl__form" novalidate>
+        <label class="dl__label" data-i18n="dl.label">Video URL</label>
+        <div class="dl__input-row">
+          <div class="input-icon dl__input-wrap">
+            <svg class="icon"><use href="#i-link"/></svg>
+            <input type="url" class="input input--lg dl__input" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Paste a video URL here..." data-i18n-placeholder="dl.placeholder" required>
+            <button type="button" class="dl__paste btn btn--ghost btn--sm" data-dl="paste" data-i18n="dl.paste">Paste</button>
+          </div>
+          <button type="submit" class="btn btn--primary btn--lg dl__analyze">
+            <span class="btn__spinner" aria-hidden="true"></span>
+            <span data-i18n="dl.analyze">Analyze URL</span>
+          </button>
+        </div>
+        <p class="field__error dl__error" role="alert" hidden></p>
+        <p class="dl__hint" data-demo-only><span data-i18n="dl.tryDemo">Try a demo link:</span>
+          <button type="button" class="chip" data-dl="demo" data-url="https://www.youtube.com/watch?v=ythole-demo">YouTube</button>
+          <button type="button" class="chip" data-dl="demo" data-url="https://www.instagram.com/reel/YTHdemo01/">Instagram</button>
+          <button type="button" class="chip" data-dl="demo" data-url="https://www.tiktok.com/@ythole/video/7312000000000">TikTok</button>
+        </p>
+      </form>
+
+      <div class="dl__stage dl__analyzing" aria-live="polite">
+        <div class="spinner-rings" aria-hidden="true"><span></span><span></span><span></span></div>
+        <p class="dl__stage-title" data-i18n="dl.analyzing">Analyzing video…</p>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Analysis progress" data-i18n-aria="dl.analysisProgress"><span class="bar__fill"></span></div>
+        <p class="dl__stage-step" data-dl-step></p>
+      </div>
+
+      <div class="dl__stage dl__result">
+        <div class="media">
+          <div class="media__thumb" data-dl-thumb></div>
+          <div class="media__body">
+            <span class="badge" data-dl-platform></span>
+            <h3 class="media__title" data-dl-title></h3>
+            <p class="media__uploader" data-dl-uploader hidden></p>
+            <dl class="meta">
+              <div><dt data-i18n="dl.duration">Duration</dt><dd data-dl-duration></dd></div>
+              <div><dt data-i18n="dl.size">Estimated size</dt><dd data-dl-size></dd></div>
+              <div><dt data-i18n="dl.bestQuality">Best quality</dt><dd data-dl-best></dd></div>
+            </dl>
+          </div>
+        </div>
+        <div class="dl__options">
+          <fieldset class="dl__fieldset">
+            <legend class="field__label" data-i18n="dl.format">Format</legend>
+            <div class="pills" data-dl-formats role="radiogroup"></div>
+          </fieldset>
+          <fieldset class="dl__fieldset">
+            <legend class="field__label" data-i18n="dl.quality">Quality</legend>
+            <div class="pills" data-dl-qualities role="radiogroup"></div>
+          </fieldset>
+        </div>
+        <p class="dl__guest-note" data-dl-guest hidden><svg class="icon"><use href="#i-history"/></svg><span data-i18n="dl.guestNote">Log in to keep a history of your downloads.</span></p>
+        <p class="notice"><svg class="icon"><use href="#i-shield"/></svg><span data-i18n="legal.notice">Only download content you own or are authorized to download. Platform terms of service and copyright laws apply.</span></p>
+        <div class="dl__actions">
+          <button type="button" class="btn btn--ghost" data-dl="reset" data-i18n="dl.cancel">Cancel</button>
+          <button type="button" class="btn btn--primary btn--lg" data-dl="download"><svg class="icon"><use href="#i-download"/></svg><span data-i18n="dl.download">Download</span></button>
+        </div>
+      </div>
+
+      <p class="visually-hidden" aria-live="polite" data-dl-announce></p>
+      <div class="dl__stage dl__progress">
+        <div class="ring" data-ring role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Download progress" data-i18n-aria="dl.downloading">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="ring__track" cx="60" cy="60" r="52" />
+            <circle class="ring__inner" cx="60" cy="60" r="40" />
+            <circle class="ring__fill" cx="60" cy="60" r="52" />
+          </svg>
+          <div class="ring__label"><strong data-ring-pct>0%</strong><span data-dl-status data-i18n="dl.downloading">Downloading…</span></div>
+        </div>
+        <div class="dl__progress-info">
+          <h3 class="media__title" data-dl-title></h3>
+          <dl class="meta meta--grid">
+            <div><dt data-i18n="dl.downloaded">Downloaded</dt><dd data-dl-amount>0 MB / 0 MB</dd></div>
+            <div><dt data-i18n="dl.speed">Speed</dt><dd data-dl-speed>0 MB/s</dd></div>
+            <div><dt data-i18n="dl.remaining">Remaining</dt><dd data-dl-eta>—</dd></div>
+            <div><dt data-i18n="dl.status">Status</dt><dd data-dl-status-text>—</dd></div>
+          </dl>
+          <p class="dl__note" data-dl-note hidden></p>
+          <div class="dl__actions">
+            <button type="button" class="btn btn--outline" data-dl="pause" data-i18n="dl.pause">Pause</button>
+            <button type="button" class="btn btn--ghost" data-dl="cancel" data-i18n="dl.cancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dl__stage dl__complete">
+        <div class="success-mark" aria-hidden="true">
+          <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" /><path d="m15 27 7 7 15-15" /></svg>
+        </div>
+        <p class="dl__stage-title" data-i18n="dl.complete">Download complete</p>
+        <h3 class="media__title" data-dl-title></h3>
+        <p class="dl__expiry" data-dl-expiry hidden></p>
+        <dl class="meta meta--inline">
+          <div><dt data-i18n="dl.fileSize">File size</dt><dd data-dl-final-size></dd></div>
+          <div><dt data-i18n="dl.format">Format</dt><dd data-dl-final-format></dd></div>
+          <div><dt data-i18n="dl.quality">Quality</dt><dd data-dl-final-quality></dd></div>
+        </dl>
+        <div class="dl__actions dl__actions--wrap">
+          <a class="btn btn--primary" data-dl="save" href="#"><svg class="icon"><use href="#i-download"/></svg><span data-i18n="dl.saveFile">Download file</span></a>
+          <button type="button" class="btn btn--outline" data-dl="copy"><svg class="icon"><use href="#i-copy"/></svg><span data-i18n="dl.copyLink">Copy link</span></button>
+          <a class="btn btn--outline" href="#/dashboard/downloads" data-dl="history" data-auth="user" hidden><svg class="icon"><use href="#i-history"/></svg><span data-i18n="dl.history">View history</span></a>
+          <button type="button" class="btn btn--ghost" data-dl="reset"><svg class="icon"><use href="#i-refresh"/></svg><span data-i18n="dl.newDownload">New download</span></button>
+        </div>
+      </div>
+
+      <div class="dl__stage dl__failed" role="alert">
+        <span class="fail-mark" aria-hidden="true"><svg class="icon"><use href="#i-error"/></svg></span>
+        <p class="dl__stage-title" data-dl-fail-title data-i18n="dl.failedTitle">Video analysis failed</p>
+        <p class="dl__stage-step" data-dl-fail-text></p>
+        <div class="dl__actions">
+          <button type="button" class="btn btn--outline" data-action="open-modal" data-modal="errorInfo" data-i18n="dl.whatHappened">What happened?</button>
+          <button type="button" class="btn btn--primary" data-dl="retry" data-i18n="dl.retry" hidden>Retry download</button>
+          <button type="button" class="btn btn--primary" data-dl="reset" data-i18n="dl.tryAgain">Try again</button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-login">
+    <form class="form" data-form="login" novalidate>
+      <div class="field">
+        <label class="field__label" for="{id}-identifier" data-i18n="auth.identifier">Username or email</label>
+        <div class="input-icon"><svg class="icon"><use href="#i-user"/></svg>
+          <input class="input" id="{id}-identifier" name="identifier" autocomplete="username" required></div>
+        <p class="field__error" id="{id}-identifier-error" role="alert" hidden></p>
+      </div>
+      <div class="field">
+        <div class="field__label-row">
+          <label class="field__label" for="{id}-password" data-i18n="auth.password">Password</label>
+          <button type="button" class="link" data-action="open-modal" data-modal="forgot" data-i18n="auth.forgot">Forgot password?</button>
+        </div>
+        <div class="input-icon"><svg class="icon"><use href="#i-lock"/></svg>
+          <input class="input" id="{id}-password" name="password" type="password" autocomplete="current-password" required>
+          <button type="button" class="input-reveal" data-reveal aria-label="Show password" data-i18n-aria="auth.showPassword"><svg class="icon"><use href="#i-eye"/></svg></button></div>
+        <p class="field__error" id="{id}-password-error" role="alert" hidden></p>
+      </div>
+      <label class="check"><input type="checkbox" name="remember"><span data-i18n="auth.remember">Remember me</span></label>
+      <button type="submit" class="btn btn--primary btn--block btn--lg"><span class="btn__spinner" aria-hidden="true"></span><span data-i18n="auth.loginButton">Log in</span></button>
+      <p class="form__switch"><span data-i18n="auth.noAccount">New to YT Hole?</span> <a href="#/register" class="link" data-auth-switch="register" data-i18n="auth.registerLink">Create an account</a></p>
+    </form>
+  </template>
+
+  <template id="tpl-register">
+    <form class="form" data-form="register" novalidate>
+      <div class="field">
+        <label class="field__label" for="{id}-username" data-i18n="auth.username">Username</label>
+        <div class="input-icon"><svg class="icon"><use href="#i-user"/></svg>
+          <input class="input" id="{id}-username" name="username" autocomplete="username" required maxlength="20"></div>
+        <p class="field__hint" data-i18n="auth.usernameHint">3–20 characters: letters, numbers, dots, underscores.</p>
+        <p class="field__error" id="{id}-username-error" role="alert" hidden></p>
+      </div>
+      <div class="field">
+        <label class="field__label" for="{id}-email" data-i18n="auth.email">Email</label>
+        <div class="input-icon"><svg class="icon"><use href="#i-mail"/></svg>
+          <input class="input" id="{id}-email" name="email" type="email" autocomplete="email" required></div>
+        <p class="field__error" id="{id}-email-error" role="alert" hidden></p>
+      </div>
+      <div class="field">
+        <label class="field__label" for="{id}-password" data-i18n="auth.password">Password</label>
+        <div class="input-icon"><svg class="icon"><use href="#i-lock"/></svg>
+          <input class="input" id="{id}-password" name="password" type="password" autocomplete="new-password" required>
+          <button type="button" class="input-reveal" data-reveal aria-label="Show password" data-i18n-aria="auth.showPassword"><svg class="icon"><use href="#i-eye"/></svg></button></div>
+        <div class="strength" data-strength="0" aria-live="polite">
+          <span class="strength__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="strength__label" data-strength-label></span>
+        </div>
+        <p class="field__error" id="{id}-password-error" role="alert" hidden></p>
+      </div>
+      <div class="field">
+        <label class="field__label" for="{id}-confirm" data-i18n="auth.confirm">Confirm password</label>
+        <div class="input-icon"><svg class="icon"><use href="#i-lock"/></svg>
+          <input class="input" id="{id}-confirm" name="confirm" type="password" autocomplete="new-password" required></div>
+        <p class="field__error" id="{id}-confirm-error" role="alert" hidden></p>
+      </div>
+      <div class="field">
+        <label class="check"><input type="checkbox" name="terms" id="{id}-terms"><span><span data-i18n="auth.agree">I agree to the</span> <button type="button" class="link" data-action="open-modal" data-modal="terms" data-i18n="footer.terms">Terms</button> <span data-i18n="auth.and">and</span> <button type="button" class="link" data-action="open-modal" data-modal="privacy" data-i18n="footer.privacy">Privacy</button><span data-i18n="auth.agreeEnd">.</span></span></label>
+        <p class="field__error" id="{id}-terms-error" role="alert" hidden></p>
+      </div>
+      <button type="submit" class="btn btn--primary btn--block btn--lg"><span class="btn__spinner" aria-hidden="true"></span><span data-i18n="auth.createButton">Create account</span></button>
+      <p class="form__switch"><span data-i18n="auth.haveAccount">Already have an account?</span> <a href="#/login" class="link" data-auth-switch="login" data-i18n="auth.loginLink">Log in</a></p>
+    </form>
+  </template>
+
+  <template id="tpl-reset">
+    <form class="form" data-form="reset" novalidate>
+      <div class="field">
+        <label class="field__label" for="{id}-password" data-i18n="security.new">New password</label>
+        <div class="input-icon"><svg class="icon"><use href="#i-lock"/></svg>
+          <input class="input" id="{id}-password" name="password" type="password" autocomplete="new-password" required>
+          <button type="button" class="input-reveal" data-reveal aria-label="Show password" data-i18n-aria="auth.showPassword"><svg class="icon"><use href="#i-eye"/></svg></button></div>
+        <p class="field__hint" data-i18n="security.newHint">At least 8 characters.</p>
+        <p class="field__error" id="{id}-password-error" role="alert" hidden></p>
+      </div>
+      <div class="field">
+        <label class="field__label" for="{id}-confirm" data-i18n="auth.confirm">Confirm password</label>
+        <div class="input-icon"><svg class="icon"><use href="#i-lock"/></svg>
+          <input class="input" id="{id}-confirm" name="confirm" type="password" autocomplete="new-password" required></div>
+        <p class="field__error" id="{id}-confirm-error" role="alert" hidden></p>
+      </div>
+      <button type="submit" class="btn btn--primary btn--block btn--lg"><span class="btn__spinner" aria-hidden="true"></span><span data-i18n="auth.resetButton">Save new password</span></button>
+    </form>
+  </template>
+
+  <!-- Scripts: classic scripts so the site runs straight from the file system -->
+  <script src="config.js" defer></script>
+  <script src="js/i18n.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/downloader.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
